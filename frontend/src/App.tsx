@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
 import Layout from '@/components/layout/Layout'
+import LandingPage from '@/pages/LandingPage'
 import Dashboard from '@/pages/Dashboard'
 import Login from '@/pages/Login'
 import Register from '@/pages/Register'
@@ -14,11 +15,14 @@ function App() {
 
   return (
     <Routes>
+      {/* Public routes */}
+      <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
       <Route path="/register" element={<Register />} />
 
+      {/* Protected routes */}
       <Route
-        path="/"
+        path="/app"
         element={
           isAuthenticated ? <Layout /> : <Navigate to="/login" replace />
         }
