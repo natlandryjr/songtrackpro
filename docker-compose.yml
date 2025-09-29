@@ -1,0 +1,204 @@
+version: '3.8'
+
+services:
+  # PostgreSQL Database
+  postgres:
+    image: postgres:15-alpine
+    container_name: songtrackpro-postgres
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER:-songtrackpro}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-dev_password}
+      POSTGRES_DB: ${POSTGRES_DB:-songtrackpro}
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backend/database/init:/docker-entrypoint-initdb.d
+    networks:
+      - songtrackpro-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U songtrackpro"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # MongoDB Database
+  mongodb:
+    image: mongo:7
+    container_name: songtrackpro-mongodb
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${MONGO_USER:-songtrackpro}
+      MONGO_INITDB_ROOT_PASSWORD: ${MONGO_PASSWORD:-dev_password}
+      MONGO_INITDB_DATABASE: ${MONGO_DB:-songtrackpro}
+    ports:
+      - "27017:27017"
+    volumes:
+      - mongodb_data:/data/db
+      - ./backend/database/mongo-init:/docker-entrypoint-initdb.d
+    networks:
+      - songtrackpro-network
+    healthcheck:
+      test: echo 'db.runCommand("ping").ok' | mongosh localhost:27017/test --quiet
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Redis Cache
+  redis:
+    image: redis:7-alpine
+    container_name: songtrackpro-redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    networks:
+      - songtrackpro-network
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # Auth Service
+  auth-service:
+    build:
+      context: ./backend/services/auth
+      dockerfile: Dockerfile
+    container_name: songtrackpro-auth
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+    ports:
+      - "3001:3001"
+    volumes:
+      - ./backend/services/auth:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+  # Meta Ads Service
+  meta-service:
+    build:
+      context: ./backend/services/meta
+      dockerfile: Dockerfile
+    container_name: songtrackpro-meta
+    environment:
+      NODE_ENV: development
+      PORT: 3002
+    ports:
+      - "3002:3002"
+    volumes:
+      - ./backend/services/meta:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+  # Spotify Service
+  spotify-service:
+    build:
+      context: ./backend/services/spotify
+      dockerfile: Dockerfile
+    container_name: songtrackpro-spotify
+    environment:
+      NODE_ENV: development
+      PORT: 3003
+    ports:
+      - "3003:3003"
+    volumes:
+      - ./backend/services/spotify:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+  # Analytics Service
+  analytics-service:
+    build:
+      context: ./backend/services/analytics
+      dockerfile: Dockerfile
+    container_name: songtrackpro-analytics
+    environment:
+      NODE_ENV: development
+      PORT: 3004
+    ports:
+      - "3004:3004"
+    volumes:
+      - ./backend/services/analytics:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+      mongodb:
+        condition: service_healthy
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+  # API Gateway
+  api-gateway:
+    build:
+      context: ./backend/gateway
+      dockerfile: Dockerfile
+    container_name: songtrackpro-gateway
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+    ports:
+      - "3000:3000"
+    volumes:
+      - ./backend/gateway:/app
+      - /app/node_modules
+    depends_on:
+      - auth-service
+      - meta-service
+      - spotify-service
+      - analytics-service
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+  # Frontend
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: songtrackpro-frontend
+    environment:
+      NODE_ENV: development
+      VITE_API_URL: http://localhost:3000
+    ports:
+      - "5173:5173"
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - api-gateway
+    networks:
+      - songtrackpro-network
+    command: npm run dev
+
+volumes:
+  postgres_data:
+  mongodb_data:
+  redis_data:
+
+networks:
+  songtrackpro-network:
+    driver: bridge
