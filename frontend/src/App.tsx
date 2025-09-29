@@ -1,5 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import { useAuthStore } from '@/store/authStore'
+import { ThemeProvider } from '@/contexts/ThemeContext'
+import { NotificationsProvider } from '@/contexts/NotificationsContext'
 import Layout from '@/components/layout/Layout'
 import LandingPage from '@/pages/LandingPage'
 import Dashboard from '@/pages/Dashboard'
@@ -14,7 +16,9 @@ function App() {
   const { isAuthenticated } = useAuthStore()
 
   return (
-    <Routes>
+    <ThemeProvider>
+      <NotificationsProvider>
+        <Routes>
       {/* Public routes */}
       <Route path="/" element={<LandingPage />} />
       <Route path="/login" element={<Login />} />
@@ -36,6 +40,8 @@ function App() {
 
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
+      </NotificationsProvider>
+    </ThemeProvider>
   )
 }
 

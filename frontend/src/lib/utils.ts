@@ -13,7 +13,13 @@ export function formatCurrency(amount: number): string {
 }
 
 export function formatNumber(num: number): string {
-  return new Intl.NumberFormat('en-US').format(num)
+  if (num >= 1000000) {
+    return (num / 1000000).toFixed(1) + 'M'
+  }
+  if (num >= 1000) {
+    return (num / 1000).toFixed(1) + 'K'
+  }
+  return num.toString()
 }
 
 export function formatDate(date: string | Date): string {
@@ -21,5 +27,15 @@ export function formatDate(date: string | Date): string {
     year: 'numeric',
     month: 'short',
     day: 'numeric',
+  }).format(new Date(date))
+}
+
+export function formatDateTime(date: Date | string): string {
+  return new Intl.DateTimeFormat('en-US', {
+    year: 'numeric',
+    month: 'short',
+    day: 'numeric',
+    hour: '2-digit',
+    minute: '2-digit',
   }).format(new Date(date))
 }
