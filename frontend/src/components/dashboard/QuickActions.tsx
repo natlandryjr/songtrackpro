@@ -1,5 +1,6 @@
 import { Plus, TrendingUp, Music, Download } from 'lucide-react'
 import { useState } from 'react'
+import { useNavigate } from 'react-router-dom'
 import Card, { CardContent, CardHeader, CardTitle } from '@/components/ui/Card'
 import Button from '@/components/ui/Button'
 
@@ -13,6 +14,7 @@ interface QuickAction {
 }
 
 export default function QuickActions() {
+  const navigate = useNavigate()
   const [showCreateModal, setShowCreateModal] = useState(false)
 
   const actions: QuickAction[] = [
@@ -22,7 +24,7 @@ export default function QuickActions() {
       description: 'Launch a new Meta Ads campaign',
       icon: Plus,
       color: 'from-purple-500 to-pink-500',
-      action: () => setShowCreateModal(true),
+      action: () => navigate('/app/campaigns'),
     },
     {
       id: 'connect-meta',
