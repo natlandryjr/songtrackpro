@@ -24,6 +24,23 @@ const limiter = rateLimit({
 })
 app.use(limiter)
 
+// Root route
+app.get('/', (req, res) => {
+  res.json({
+    service: 'SongTrackPro API Gateway',
+    version: '1.0.0',
+    status: 'running',
+    timestamp: new Date().toISOString(),
+    endpoints: {
+      health: '/health',
+      auth: '/auth',
+      meta: '/meta',
+      spotify: '/spotify',
+      analytics: '/analytics'
+    }
+  })
+})
+
 // Health check
 app.get('/health', (req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() })

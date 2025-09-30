@@ -1,0 +1,46 @@
+name: Deploy Backend to Azure App Service
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'backend/**'
+  workflow_dispatch:
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+
+      - name: Install dependencies
+        run: |
+          cd backend
+          npm ci
+
+      - name: Build gateway
+        run: |
+          cd backend/gateway
+          npm run build
+
+      - name: Create deployment package
+        run: |
+          mkdir -p deploy
+          cp -r backend/gateway/dist deploy/
+          cp -r backend/gateway/node_modules deploy/
+          cp backend/gateway/package*.json deploy/
+          cd deploy && zip -r ../backend-deploy.zip .
+
+      - name: Deploy to Azure Web App
+        uses: azure/webapps-deploy@v2
+        with:
+          app-name: 'songtrackpro-backend001'
+          publish-profile: ${{ secrets.AZURE_WEBAPP_PUBLISH_PROFILE }}
+          package: backend-deploy.zip
