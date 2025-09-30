@@ -1,5 +1,5 @@
 import { useState } from 'react'
-import { Music, Users, Globe, TrendingUp, Download, Play } from 'lucide-react'
+import { Music, Users, TrendingUp, Download, Play } from 'lucide-react'
 import { Bar, Doughnut } from 'react-chartjs-2'
 import { Chart as ChartJS, ArcElement, BarElement, CategoryScale, LinearScale, Tooltip, Legend } from 'chart.js'
 import MetricCard from '@/components/dashboard/MetricCard'
@@ -60,7 +60,7 @@ const geoData = {
 }
 
 export default function SpotifyAnalytics() {
-  const [dateRange, setDateRange] = useState({ start: '', end: '' })
+  const [, setDateRange] = useState({ start: '', end: '' })
 
   const totalStreams = mockData.streams.reduce((a, b) => a + b, 0)
   const totalListeners = Math.floor(totalStreams / 2.3)

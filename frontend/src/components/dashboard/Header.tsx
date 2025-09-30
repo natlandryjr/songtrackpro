@@ -44,7 +44,7 @@ const mockNotifications: Notification[] = [
 
 export default function Header() {
   const navigate = useNavigate()
-  const { user, logout } = useAuthStore()
+  const { user, clearAuth } = useAuthStore()
   const { theme, toggleTheme } = useTheme()
   const [showNotifications, setShowNotifications] = useState(false)
   const [showUserMenu, setShowUserMenu] = useState(false)
@@ -53,7 +53,7 @@ export default function Header() {
   const unreadCount = mockNotifications.filter(n => !n.read).length
 
   const handleLogout = () => {
-    logout()
+    clearAuth()
     navigate('/login')
   }
 

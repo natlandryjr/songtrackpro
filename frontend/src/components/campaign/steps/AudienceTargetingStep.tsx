@@ -46,14 +46,30 @@ export default function AudienceTargetingStep() {
       : [...selectedLocations, location]
 
     setSelectedLocations(updated)
-    updateTargeting({ locations: updated })
+    updateCampaignData({
+      targeting: {
+        ...campaignData.targeting,
+        demographics: {
+          ...demographics,
+          locations: updated,
+        },
+      },
+    })
   }
 
   const handleAddCustomLocation = () => {
     if (customLocation && !selectedLocations.includes(customLocation)) {
       const updated = [...selectedLocations, customLocation]
       setSelectedLocations(updated)
-      updateTargeting({ locations: updated })
+      updateCampaignData({
+        targeting: {
+          ...campaignData.targeting,
+          demographics: {
+            ...demographics,
+            locations: updated,
+          },
+        },
+      })
       setCustomLocation('')
     }
   }

@@ -13,7 +13,6 @@ import {
   ArrowRight,
   Sparkles,
   Users,
-  DollarSign,
 } from 'lucide-react'
 
 export default function LandingPage() {

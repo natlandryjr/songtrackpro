@@ -24,14 +24,15 @@ export function NotificationsProvider({ children }: { children: ReactNode }) {
 
   const addToast = (toast: Omit<Toast, 'id'>) => {
     const id = Math.random().toString(36).substring(7)
-    const newToast: Toast = { ...toast, id, duration: toast.duration || 5000 }
+    const duration = toast.duration || 5000
+    const newToast: Toast = { ...toast, id, duration }
     setToasts(prev => [...prev, newToast])
 
     // Auto-remove after duration
-    if (newToast.duration > 0) {
+    if (duration > 0) {
       setTimeout(() => {
         removeToast(id)
-      }, newToast.duration)
+      }, duration)
     }
   }
 

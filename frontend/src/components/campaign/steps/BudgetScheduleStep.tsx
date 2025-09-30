@@ -71,7 +71,7 @@ export default function BudgetScheduleStep() {
       const start = field === 'startDate' ? value : budget.startDate
       const end = field === 'endDate' ? value : budget.endDate
       const daily = calculateDailyBudget(budget.totalBudget, start, end)
-      updates.dailyBudget = daily
+      updates.dailyBudget = daily.toString()
     }
     handleBudgetUpdate(updates)
   }

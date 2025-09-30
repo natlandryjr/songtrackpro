@@ -77,7 +77,7 @@ const spendData = {
 }
 
 export default function MetaAds() {
-  const [dateRange, setDateRange] = useState({ start: '', end: '' })
+  const [, setDateRange] = useState({ start: '', end: '' })
 
   const totalImpressions = mockData.impressions.reduce((a, b) => a + b, 0)
   const totalClicks = mockData.clicks.reduce((a, b) => a + b, 0)

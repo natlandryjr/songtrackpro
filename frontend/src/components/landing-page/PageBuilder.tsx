@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { DndContext, closestCenter, KeyboardSensor, PointerSensor, useSensor, useSensors, DragEndEvent } from '@dnd-kit/core'
 import { arrayMove, SortableContext, sortableKeyboardCoordinates, verticalListSortingStrategy } from '@dnd-kit/sortable'
-import { Plus, Eye, Settings, Smartphone, Monitor, Save, Upload } from 'lucide-react'
+import { Plus, Eye, Smartphone, Monitor, Save, Upload } from 'lucide-react'
 import Button from '@/components/ui/Button'
 import SortableSection from './SortableSection'
 import SectionSettings from './SectionSettings'
@@ -21,8 +21,6 @@ export default function PageBuilder({ page, onUpdate, onSave, onPublish }: PageB
   const [sections, setSections] = useState<PageSection[]>(page.content.sections)
   const [selectedSection, setSelectedSection] = useState<PageSection | null>(null)
   const [showAddModal, setShowAddModal] = useState(false)
-  const [showThemeSettings, setShowThemeSettings] = useState(false)
-  const [showSEOSettings, setShowSEOSettings] = useState(false)
   const [previewMode, setPreviewMode] = useState<'desktop' | 'mobile'>('desktop')
   const [activeTab, setActiveTab] = useState<'sections' | 'theme' | 'seo'>('sections')
 

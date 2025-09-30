@@ -89,7 +89,7 @@ export default function AdCreativeStep() {
     const files = e.target.files
     if (files) {
       // Simulate file upload
-      const urls = Array.from(files).map((file, i) => URL.createObjectURL(file))
+      const urls = Array.from(files).map(file => URL.createObjectURL(file))
       handleCreativeUpdate({ mediaUrls: [...creative.mediaUrls, ...urls] })
     }
   }
