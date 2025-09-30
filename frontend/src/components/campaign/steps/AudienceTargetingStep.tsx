@@ -48,11 +48,13 @@ export default function AudienceTargetingStep() {
     setSelectedLocations(updated)
     updateCampaignData({
       targeting: {
-        ...campaignData.targeting,
         demographics: {
           ...demographics,
           locations: updated,
         },
+        interests: campaignData.targeting?.interests || [],
+        customAudiences: campaignData.targeting?.customAudiences || [],
+        lookalike: campaignData.targeting?.lookalike || { enabled: false, similarity: 1 },
       },
     })
   }
@@ -63,11 +65,13 @@ export default function AudienceTargetingStep() {
       setSelectedLocations(updated)
       updateCampaignData({
         targeting: {
-          ...campaignData.targeting,
           demographics: {
             ...demographics,
             locations: updated,
           },
+          interests: campaignData.targeting?.interests || [],
+          customAudiences: campaignData.targeting?.customAudiences || [],
+          lookalike: campaignData.targeting?.lookalike || { enabled: false, similarity: 1 },
         },
       })
       setCustomLocation('')
